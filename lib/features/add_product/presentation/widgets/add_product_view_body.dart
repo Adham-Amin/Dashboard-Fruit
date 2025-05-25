@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fruit_hub_dashboard/core/functions/bar_massage.dart';
 import 'package:fruit_hub_dashboard/core/utils/app_colors.dart';
 import 'package:fruit_hub_dashboard/core/utils/app_styles.dart';
 import 'package:fruit_hub_dashboard/core/widgets/custom_button.dart';
 import 'package:fruit_hub_dashboard/core/widgets/custom_text_from_field.dart';
+import 'package:fruit_hub_dashboard/features/add_product/presentation/widgets/custom_image_picker.dart';
 
 class AddProductViewBody extends StatefulWidget {
   const AddProductViewBody({super.key});
@@ -13,6 +16,7 @@ class AddProductViewBody extends StatefulWidget {
 
 class _AddProductViewBodyState extends State<AddProductViewBody> {
   late String code, name, price, description;
+  File? imageFile;
   bool isFeaturedProduct = false;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   AutovalidateMode autovalidateMode = AutovalidateMode.disabled;
@@ -27,6 +31,7 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
           child: Column(
             spacing: 8,
             children: [
+              CustomImagePicker(onChanged: (value) => imageFile = value),
               CustomTextFromField(
                 onSaved: (value) => code = value!.toLowerCase(),
                 hintText: 'Product Code',
@@ -66,13 +71,20 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
               CustomButton(
                 title: 'Add Product',
                 onPressed: () {
-                  if (formKey.currentState!.validate()) {
-                    formKey.currentState!.save();
+                  if (imageFile != null) {
+                    if (formKey.currentState!.validate()) {
+                      formKey.currentState!.save();
+                    } else {
+                      setState(
+                        () => autovalidateMode = AutovalidateMode.always,
+                      );
+                    }
                   } else {
-                    setState(() => autovalidateMode = AutovalidateMode.always);
+                    showSnackBar(context, 'Please Select Product Image');
                   }
                 },
               ),
+              const SizedBox(height: 32),
             ],
           ),
         ),

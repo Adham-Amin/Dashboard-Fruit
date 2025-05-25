@@ -5,6 +5,7 @@ import 'package:fruit_hub_dashboard/core/utils/app_colors.dart';
 import 'package:fruit_hub_dashboard/core/utils/app_styles.dart';
 import 'package:fruit_hub_dashboard/core/widgets/custom_button.dart';
 import 'package:fruit_hub_dashboard/core/widgets/custom_text_from_field.dart';
+import 'package:fruit_hub_dashboard/features/add_product/domain/entities/add_product_entity.dart';
 import 'package:fruit_hub_dashboard/features/add_product/presentation/widgets/custom_image_picker.dart';
 
 class AddProductViewBody extends StatefulWidget {
@@ -15,7 +16,8 @@ class AddProductViewBody extends StatefulWidget {
 }
 
 class _AddProductViewBodyState extends State<AddProductViewBody> {
-  late String code, name, price, description;
+  late String code, name, description;
+  late num price;
   File? imageFile;
   bool isFeaturedProduct = false;
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -43,7 +45,7 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
                 keyboardType: TextInputType.text,
               ),
               CustomTextFromField(
-                onSaved: (value) => price = value!,
+                onSaved: (value) => price = num.parse(value!),
                 hintText: 'Product Price',
                 keyboardType: TextInputType.number,
               ),
@@ -74,6 +76,14 @@ class _AddProductViewBodyState extends State<AddProductViewBody> {
                   if (imageFile != null) {
                     if (formKey.currentState!.validate()) {
                       formKey.currentState!.save();
+                      AddProductEntity product = AddProductEntity(
+                        code: code,
+                        name: name,
+                        price: price,
+                        description: description,
+                        imageFile: imageFile!,
+                        isFeaturedProduct: isFeaturedProduct,
+                      );
                     } else {
                       setState(
                         () => autovalidateMode = AutovalidateMode.always,
